@@ -1,24 +1,70 @@
 name: Build APK
-on: [push]
+
+on:
+  push:
+    branches:
+      - main  # 触发工作流的分支，可以根据需要修改
+  pull_request:
+    branches:
+      - main  # 在 PR 时也可以触发工作流
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 环境
+
     steps:
+      # 1. 检出代码
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4  # 使用最新版本的 checkout
+
+      # 2. 设置 Python 环境
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5  # 使用最新版本的 setup-python
         with:
-          python-version: '3.x'
-      - name: Install dependencies
+          python-version: '3.x'  # 指定 Python 版本，例如 3.9
+
+      # 3. 安装系统依赖
+      - name: Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y python3-pip python3-setuptools python3-wheel
+          sudo apt install -y zip unzip openjdk-17-jdk
+
+      # 4. 安装 Buildozer 和项目依赖
+      - name: Install Buildozer and project dependencies
+        run: |
           pip install buildozer
-      - name: Build APK
+          pip install -r requirements.txt  # 如果项目有 requirements.txt 文件
+
+      # 5. 初始化 Buildozer
+      - name: Initialize Buildozer
         run: |
           buildozer init
+
+      # 6. 修改 Buildozer 配置文件（可选）
+      - name: Modify buildozer.spec (if needed)
+        run: |
+          sed -i 's/^title = .*/title = MyApp/' buildozer.spec  # 修改应用名称
+          sed -i 's/^package.name = .*/package.name = myapp/' buildozer.spec  # 修改包名
+          sed -i 's/^requirements = .*/requirements = kivy, requests/' buildozer.spec  # 修改依赖
+
+      # 7. 打包 APK
+      - name: Build APK
+        run: |
           buildozer -v android debug
+
+      # 8. 上传生成的 APK 文件
+      - name: Upload APK
+        uses: actions/upload-artifact@v4  # 使用最新版本的 upload-artifact
+        with:
+          name: app-debug.apk
+          path: bin/*.apk  # 上传所有生成的 APK 文件
+          if-no-files-found: error  # 如果没有找到文件，报错
+
+      # 9. 清理缓存（可选）
+      - name: Clean up
+        run: |
+          rm -rf .buildozer  # 删除 Buildozer 缓存
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
