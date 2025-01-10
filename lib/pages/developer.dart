@@ -15,13 +15,13 @@ class DeveloperInfoPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           DeveloperCard(
-            name: 'oboard',
+            name: '马赛长颈鹿',
             description: '一位热爱创造一切的小透明',
             image: AssetImage('images/oboard.jpg'),
           ),
           DeveloperCard(
             name: 'Luxe7',
-            description: '一个普通路过的菠萝李子水蜜桃品鉴大师',
+            description: '林师傅',
             image: AssetImage('images/Luxe7.jpg'),
           ),
           Spacer(),
@@ -29,10 +29,10 @@ class DeveloperInfoPage extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             child: Text(
               '''Github开源地址：
-https://github.com/Luxe7/BaoZan
+https://github.com/linzongzong2333/pyq
 
 联系我们：
-Luxe7@foxmail.com\n''',
+Lux@foxmail.com\n''',
               style: TextStyle(fontSize: 16),
             ),
           ),
